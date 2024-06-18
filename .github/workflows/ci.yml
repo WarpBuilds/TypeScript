@@ -27,10 +27,6 @@ jobs:
           - '14'
         bundle:
           - 'true'
-        include:
-          - node-version: '*'
-            bundle: false
-            os: ubuntu-latest
         exclude:
           # No Node 14 on ARM macOS
           - node-version: '14'
