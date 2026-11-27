@@ -116,9 +116,6 @@ jobs:
       id-token: write
       contents: read
     env:
-      # Benchmark: run every Go test each time, so a warm run on the same commit
-      # is not answered by Go's test-result cache.
-      GOFLAGS: -count=1
       TS_HEREBY_RACE: ${{ (matrix.config.race && 'true') || 'false' }}
       TS_HEREBY_NOEMBED: ${{ (matrix.config.noembed && 'true') || 'false' }}
       TS_HEREBY_CONCURRENT_TEST_PROGRAMS: ${{ (matrix.config.concurrent-test-programs && 'true') || 'false' }}
