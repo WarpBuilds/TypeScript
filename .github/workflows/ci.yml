@@ -111,7 +111,7 @@ jobs:
               skip: true
 
     name: test (${{ matrix.config.name || matrix.config.runner }})
-    runs-on: "warpdev-ubuntu-2404-x64-8x;stack=wnomadinternalsbxci;snapshot.key=ci;snapshot.ref=${{ github.ref }};snapshot.repo=${{ github.repository }};snapshot.persist=true;node.name=dev-0002"
+    runs-on: "warpdev-ubuntu-2404-x64-8x;stack=wnomadinternalsbxci;snapshot.key=ci2;snapshot.ref=${{ github.ref }};snapshot.repo=${{ github.repository }};snapshot.persist=true;node.name=dev-0002"
     permissions:
       id-token: write
       contents: read
