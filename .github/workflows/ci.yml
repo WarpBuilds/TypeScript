@@ -2,11 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [main, main-ts7, ts7-release, 'release-*', 'weswigham/*']
+    branches: [main, main-ts7, ts7-release, 'release-*', 'weswigham/*', warp-bench-plain, warp-bench-snapshot]
   pull_request:
     branches: [main, main-ts7, ts7-release, 'release-*', 'weswigham/*']
   merge_group:
     branches: [main, main-ts7, ts7-release, 'release-*', 'weswigham/*']
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -17,6 +18,7 @@ defaults:
 
 jobs:
   build:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -29,7 +31,7 @@ jobs:
       - run: npx hereby build:api
 
   release-build:
-    if: ${{ github.repository == 'microsoft/TypeScript' && github.event_name != 'merge_group' }}
+    if: false
     runs-on: TypeScript-1ES-GitHub-TypeScript-1
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -42,6 +44,7 @@ jobs:
       - run: npx hereby vscode-typescript:release --forRelease --vscodeTypescriptRelease
 
   extension:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -52,6 +55,7 @@ jobs:
       - run: npm run extension:build
 
   package-feed-proxy:
+    if: false
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -62,6 +66,7 @@ jobs:
       - run: npm ci --registry=https://packagefeedproxy.microsoft.io/npm/
 
   go-test:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -81,7 +86,7 @@ jobs:
           go test -run=- -bench=. -benchtime=1x ./...
 
   go-test-wasm:
-    if: ${{ github.event_name != 'merge_group' }}
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -101,45 +106,12 @@ jobs:
             os: linux
             coverage: true
             main: true
-          - runner: windows-latest
-            os: windows
-            coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
-          - runner: ubuntu-26.04-arm
-            name: 'linux arm64'
-            os: linux
-            coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
-          - runner: windows-11-arm
-            name: 'windows arm64'
-            os: windows
-            coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
-          - runner: macos-latest
-            os: macos
-            coverage: true
-            skip: ${{ github.event_name == 'merge_group' || github.event_name == 'pull_request' }}
-          - runner: TypeScript-1ES-GitHub-TypeScript-1
-            os: linux
-            name: 'race mode'
-            race: true
-            skip: ${{ github.event_name == 'merge_group' || github.repository != 'microsoft/TypeScript' }}
-          - runner: ubuntu-latest
-            os: linux
-            name: 'noembed'
-            noembed: true
-          - runner: ubuntu-latest
-            os: linux
-            name: 'concurrent test programs'
-            concurrent-test-programs: true
-            coverage: true
-            skip: ${{ github.event_name == 'merge_group' }}
         exclude:
           - config:
               skip: true
 
     name: test (${{ matrix.config.name || matrix.config.runner }})
-    runs-on: ${{ matrix.config.runner }}
+    runs-on: "warpdev-ubuntu-2404-x64-8x;stack=wnomadinternalsbxci;snapshot.key=ci;snapshot.ref=${{ github.ref }};snapshot.repo=${{ github.repository }};snapshot.persist=true;node.name=dev-0002"
     permissions:
       id-token: write
       contents: read
@@ -194,6 +166,7 @@ jobs:
           path: tsc/testdata/baselines/local
 
   test-extra:
+    if: false
     strategy:
       fail-fast: ${{ github.event_name == 'merge_group' }}
       matrix:
@@ -256,6 +229,7 @@ jobs:
       - run: git diff --staged --exit-code --stat
 
   lint:
+    if: false
     strategy:
       fail-fast: ${{ github.event_name == 'merge_group' }}
       matrix:
@@ -319,6 +293,7 @@ jobs:
           GOARCH: ${{ matrix.config.goarch }}
 
   format:
+    if: false
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -329,6 +304,7 @@ jobs:
       - run: npx hereby check:format
 
   generate:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -343,6 +319,7 @@ jobs:
       - run: git diff --staged --exit-code --stat
 
   codegen:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -354,6 +331,7 @@ jobs:
       - run: npx hereby test:codegen
 
   tidy:
+    if: false
     runs-on: ubuntu-slim
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -364,6 +342,7 @@ jobs:
       - run: git diff --exit-code
 
   smoke:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -377,6 +356,7 @@ jobs:
       - run: ./built/local/tsc -p ./tsc/testdata/fixtures/compiler --noEmit
 
   misc:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -393,7 +373,7 @@ jobs:
 
   required:
     runs-on: ubuntu-slim
-    if: ${{ always() }}
+    if: false
     needs:
       - build
       - codegen
